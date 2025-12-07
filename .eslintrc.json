@@ -1,4 +1,12 @@
 {
   "root": true,
-  "extends": "@raycast"
+  "extends": "@raycast",
+  "rules": {
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-nocheck": "allow-with-description"
+      }
+    ]
+  }
 }

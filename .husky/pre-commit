@@ -1,0 +1,25 @@
+# Run TypeScript/TSX lint (code only, skip package.json validation)
+echo "Running TypeScript/TSX lint..."
+npm run lint:code
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript/TSX lint failed. Commit aborted."
+  exit 1
+fi
+
+# Run markdown lint
+echo "Running Markdown lint..."
+npm run lint:md
+if [ $? -ne 0 ]; then
+  echo "❌ Markdown lint failed. Commit aborted."
+  exit 1
+fi
+
+# Run build
+echo "Running build..."
+npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Build failed. Commit aborted."
+  exit 1
+fi
+
+echo "✅ All checks passed!"

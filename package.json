@@ -142,6 +142,8 @@
     "@types/node": "20.8.10",
     "@types/react": "18.3.3",
     "eslint": "^8.57.0",
+    "husky": "^9.1.7",
+    "markdownlint-cli2": "^0.19.1",
     "prettier": "^3.2.5",
     "react": "^18.2.0",
     "typescript": "^5.4.5"
@@ -151,6 +153,11 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "publish": "npx @raycast/api@latest publish"
+    "lint:code": "eslint --ext .ts,.tsx src/",
+    "lint:code:fix": "eslint --ext .ts,.tsx src/ --fix",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
+    "publish": "npx @raycast/api@latest publish",
+    "prepare": "husky"
   }
 }

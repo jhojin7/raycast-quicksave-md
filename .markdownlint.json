@@ -1,0 +1,15 @@
+{
+  "default": true,
+  "MD013": false,
+  "MD033": {
+    "allowed_elements": [
+      "antml:function_calls",
+      "antml:invoke",
+      "antml:parameter",
+      "example",
+      "reasoning",
+      "commentary"
+    ]
+  },
+  "MD041": false
+}
