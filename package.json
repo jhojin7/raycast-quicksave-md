@@ -1,0 +1,67 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "quick-markdown-note",
+  "title": "Quick Markdown Note",
+  "description": "Quickly capture text to timestamped Markdown files",
+  "icon": "command-icon.png",
+  "author": "your-raycast-username",
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "version": "1.0.0",
+  "commands": [
+    {
+      "name": "save-note",
+      "title": "Save Note",
+      "subtitle": "Quick Markdown Capture",
+      "description": "Save text to a timestamped Markdown file",
+      "mode": "no-view",
+      "arguments": [
+        {
+          "name": "content",
+          "placeholder": "Text to save...",
+          "type": "text",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "preferences": [
+    {
+      "name": "notesDirectory",
+      "title": "Note Location",
+      "description": "The folder where .md files will be created",
+      "type": "directory",
+      "required": true,
+      "default": "~/Documents"
+    },
+    {
+      "name": "enableFrontmatter",
+      "title": "Add Metadata",
+      "description": "If checked, adds YAML frontmatter to the top of the note",
+      "type": "checkbox",
+      "required": false,
+      "default": true,
+      "label": "Enable YAML frontmatter"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.68.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.8",
+    "@types/node": "20.8.10",
+    "@types/react": "18.3.3",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
