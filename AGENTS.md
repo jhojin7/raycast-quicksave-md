@@ -21,7 +21,9 @@
 - **File paths**: Use path.join() for cross-platform compatibility
 - **Raycast APIs**: Prefer no-view commands for background operations
 - **Validation**: Check directory exists before file operations
-- **User feedback**: Use showToast() with appropriate styles (Success/Failure)
+- **User feedback**:
+  - Use `showHUD()` for success notifications (appears outside Raycast window, auto-closes Raycast)
+  - Use `showToast()` for errors (keeps Raycast open so user can see the error)
 - **Date formatting**: Customizable via Moment.js-style tokens (YYYY, MM, DD, HH, mm, ss, etc.)
 - **Content resolution**: Follow priority: argument → selection → clipboard
 - **TypeScript workarounds**: Use `// @ts-nocheck` for files with React 18 type conflicts

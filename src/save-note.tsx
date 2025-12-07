@@ -5,6 +5,8 @@ import {
   Toast,
   getSelectedText,
   Clipboard,
+  showHUD,
+  closeMainWindow,
 } from "@raycast/api";
 import { writeFile, mkdir, access } from "fs/promises";
 import path from "path";
@@ -180,12 +182,10 @@ ${noteContent}`;
     // 5. Write File
     try {
       await writeFile(filePath, finalOutput, "utf-8");
-      await showToast({
-        style: Toast.Style.Success,
-        title: "Note Saved",
-        message: filename,
-      });
+      // Show HUD notification (appears outside Raycast window) and automatically close Raycast
+      await showHUD(`Note Saved: ${filename}`);
     } catch (error) {
+      // Keep toast for errors so user can see what went wrong before Raycast closes
       await showToast({
         style: Toast.Style.Failure,
         title: "Failed to save note",
