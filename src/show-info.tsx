@@ -1,7 +1,32 @@
 // @ts-nocheck - React 18 type conflicts with Raycast API
 import { Detail, ActionPanel, Action, openExtensionPreferences } from "@raycast/api";
 
+/**
+ * @file show-info.tsx
+ * @description Information view command that displays documentation,
+ * shortcuts, and configuration details for the extension.
+ * @author jhojin7
+ */
+
+/**
+ * Show Extension Info command.
+ * Displays comprehensive documentation including:
+ * - Extension overview and purpose
+ * - Keyboard shortcut setup instructions
+ * - Usage examples (quick capture, direct input, clipboard fallback)
+ * - Filename format tokens and examples
+ * - YAML frontmatter field descriptions
+ * - Configuration guide
+ * - Tips for integration with PKM tools (Obsidian, Logseq)
+ * - Troubleshooting common issues
+ *
+ * @returns Detail view with markdown documentation and action panel
+ */
 export default function Command() {
+  /**
+   * Markdown content for the extension info view.
+   * Provides comprehensive documentation for users.
+   */
   const markdown = `
 # Quick Markdown Note
 
@@ -11,7 +36,7 @@ A lightweight personal knowledge management tool for rapid note-taking in Raycas
 
 This extension helps you quickly capture thoughts, ideas, and snippets into timestamped Markdown files. Perfect for building a personal knowledge base or Zettelkasten system.
 
-**GitHub:** [Placeholder - Add your repository URL here]
+**GitHub:** https://github.com/jhojin7/raycast-quicksave-md
 
 ## ⌨️ Keyboard Shortcuts
 
