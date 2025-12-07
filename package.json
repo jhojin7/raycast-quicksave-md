@@ -2,9 +2,9 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "quick-markdown-note",
   "title": "Quick Markdown Note",
-  "description": "Quickly capture text to timestamped Markdown files",
+  "description": "Quickly capture text to timestamped Markdown files. A lightweight personal knowledge management tool for rapid note-taking.",
   "icon": "command-icon.png",
-  "author": "your-raycast-username",
+  "author": "hojinjang",
   "categories": [
     "Productivity"
   ],
@@ -25,25 +25,113 @@
           "required": false
         }
       ]
+    },
+    {
+      "name": "show-info",
+      "title": "Show Extension Info",
+      "subtitle": "Quick Markdown Note",
+      "description": "Display help, keyboard shortcuts, and configuration examples",
+      "mode": "view"
     }
   ],
   "preferences": [
     {
       "name": "notesDirectory",
-      "title": "Note Location",
+      "title": "Notes Directory",
       "description": "The folder where .md files will be created",
       "type": "directory",
       "required": true,
       "default": "~/Documents"
     },
     {
+      "name": "filenameFormat",
+      "title": "Filename Format",
+      "description": "Template for filename using Moment.js tokens (e.g., YYYY-MM-DD-HHmm-ss). See extension info for examples.",
+      "type": "textfield",
+      "required": false,
+      "default": "YYYY-MM-DD-HHmm-ss",
+      "placeholder": "YYYY-MM-DD-HHmm-ss"
+    },
+    {
       "name": "enableFrontmatter",
-      "title": "Add Metadata",
-      "description": "If checked, adds YAML frontmatter to the top of the note",
+      "title": "YAML Frontmatter",
+      "description": "Enable YAML frontmatter at the top of notes",
       "type": "checkbox",
       "required": false,
       "default": true,
-      "label": "Enable YAML frontmatter"
+      "label": "Enable frontmatter"
+    },
+    {
+      "name": "frontmatterIncludeDate",
+      "title": "",
+      "description": "Include 'date' field in frontmatter",
+      "type": "checkbox",
+      "required": false,
+      "default": true,
+      "label": "Include date"
+    },
+    {
+      "name": "frontmatterIncludeType",
+      "title": "",
+      "description": "Include 'type' field in frontmatter",
+      "type": "checkbox",
+      "required": false,
+      "default": true,
+      "label": "Include type"
+    },
+    {
+      "name": "frontmatterIncludeTitle",
+      "title": "",
+      "description": "Include 'title' field (auto-generated from first line)",
+      "type": "checkbox",
+      "required": false,
+      "default": false,
+      "label": "Include title"
+    },
+    {
+      "name": "frontmatterIncludeTags",
+      "title": "",
+      "description": "Include 'tags' field in frontmatter",
+      "type": "checkbox",
+      "required": false,
+      "default": false,
+      "label": "Include tags"
+    },
+    {
+      "name": "frontmatterDefaultTags",
+      "title": "Default Tags",
+      "description": "Comma-separated tags to include by default (e.g., note, quick-capture)",
+      "type": "textfield",
+      "required": false,
+      "default": "",
+      "placeholder": "note, quick-capture"
+    },
+    {
+      "name": "frontmatterIncludeAuthor",
+      "title": "",
+      "description": "Include 'author' field in frontmatter",
+      "type": "checkbox",
+      "required": false,
+      "default": false,
+      "label": "Include author"
+    },
+    {
+      "name": "frontmatterDefaultAuthor",
+      "title": "Default Author",
+      "description": "Your name to include in the 'author' field",
+      "type": "textfield",
+      "required": false,
+      "default": "",
+      "placeholder": "Your Name"
+    },
+    {
+      "name": "frontmatterIncludeSource",
+      "title": "",
+      "description": "Include 'source' field (left empty for manual entry)",
+      "type": "checkbox",
+      "required": false,
+      "default": false,
+      "label": "Include source"
     }
   ],
   "dependencies": {
@@ -55,6 +143,7 @@
     "@types/react": "18.3.3",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
+    "react": "^18.2.0",
     "typescript": "^5.4.5"
   },
   "scripts": {
