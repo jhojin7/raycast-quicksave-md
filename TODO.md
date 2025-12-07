@@ -1,8 +1,8 @@
-- [ ] src/save-note.tsx: Use moment.js, do not use javascript default datetime formatting.
-- [ ] README.md: Set default as `~/Downloads`, not documents.
-- [ ] README.md: Add a feature later for: multi-line content, not a quick entry field.
-- [ ] README.md: Replace this for url to moment.js documentation.
-- [ ] README.md: Add a feature later for fetching source of entry. (e.g., `source` from raycast clipboard metadata)
-- [ ] README.md: Use github flavored markdown, not this...
+- [ ] src/save-note.tsx:128: use moment.js, do not use javascript default datetime formatting.
+- [ ] README.md:40: set default as `~/Downloads`, not documents.
+- [ ] README.md:56: add a feature later for: multi-line content, not a quick entry field.
+- [ ] README.md:82: replace this for url to moment.js documentation.
+- [ ] README.md:128: add a feature later for fetching source of entry. (e.g., `source` from raycast clipboard metadata)
+- [ ] README.md:233: use github flavored markdown, not this...
+- [x] tools/todo-updater.md:-1: Standarize formatting for todo.md (file/directory relpath, line(-1 if file wide), content)
 - [ ] tools/: add new tool(script) to fetch and update all markdown yaml frontmatter and all jsdoc file descriptions for tldr document which will be used help agents not get lost.
-- [ ] tools/todo-updater.md: Standarize formatting for todo.md (file/directory relpath, line(-1 if file wide), content)
