@@ -5,7 +5,7 @@ import {
   Toast,
   getSelectedText,
   Clipboard,
-  showHUD
+  showHUD,
 } from "@raycast/api";
 import { writeFile, mkdir, access } from "fs/promises";
 import path from "path";

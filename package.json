@@ -4,7 +4,7 @@
   "title": "Quick Markdown Note",
   "description": "Quickly capture text to timestamped Markdown files. A lightweight personal knowledge management tool for rapid note-taking.",
   "icon": "command-icon.png",
-  "author": "hojinjang",
+  "author": "jhojin7",
   "categories": [
     "Productivity"
   ],
@@ -153,8 +153,6 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "lint:code": "eslint --ext .ts,.tsx src/",
-    "lint:code:fix": "eslint --ext .ts,.tsx src/ --fix",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
     "publish": "npx @raycast/api@latest publish",
