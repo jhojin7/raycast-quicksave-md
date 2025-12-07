@@ -32,16 +32,16 @@ The extension will expose the following settings in the Raycast Preferences menu
 
 ### 4.2. Logic Flow
 
-1.  **Validation:**
+1. **Validation:**
     - Check if `notesDirectory` exists. If not, throw an error HUD prompting the user to fix the path.
-2.  **Content Resolution (Priority Order):**
-    1.  **Argument:** If the user provided text in the Raycast argument field, use it.
-    2.  **Selection:** If argument is empty, attempt to fetch `getSelectedText()`.
-    3.  **Clipboard (Fallback):** If selection is empty/unavailable, fetch `getClipboard()`.
-    4.  **Failure:** If all sources are empty, show a HUD "No text to save" and abort.
-3.  **Filename Generation:**
+2. **Content Resolution (Priority Order):**
+    1. **Argument:** If the user provided text in the Raycast argument field, use it.
+    2. **Selection:** If argument is empty, attempt to fetch `getSelectedText()`.
+    3. **Clipboard (Fallback):** If selection is empty/unavailable, fetch `getClipboard()`.
+    4. **Failure:** If all sources are empty, show a HUD "No text to save" and abort.
+3. **Filename Generation:**
     - Format: `YYYY-MM-DD-HHmm-ss.md` (Seconds included to prevent conflicts during rapid capture).
-4.  **Content Formatting:**
+4. **Content Formatting:**
     - **If `enableFrontmatter` is TRUE:**
 
       ```markdown
@@ -54,13 +54,14 @@ The extension will expose the following settings in the Raycast Preferences menu
       ```
 
     - **If `enableFrontmatter` is FALSE:**
+
       ```markdown
       [Resolved Content]
       ```
 
-5.  **File Operations:**
+5. **File Operations:**
     - Write the formatted content to `notesDirectory/filename`.
-6.  **Feedback:**
+6. **Feedback:**
     - Display a HUD notification with the message "Note Saved: [filename]" that appears outside the Raycast window.
     - Raycast automatically closes after showing the HUD (via `showHUD()` which combines notification + window closing).
 

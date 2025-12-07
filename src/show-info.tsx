@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - React 18 type conflicts with Raycast API
 import { Detail, ActionPanel, Action, openExtensionPreferences } from "@raycast/api";
 
 export default function Command() {
