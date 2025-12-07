@@ -5,3 +5,4 @@
 - [ ] README.md: Add a feature later for fetching source of entry. (e.g., `source` from raycast clipboard metadata)
 - [ ] README.md: Use github flavored markdown, not this...
 - [ ] tools/: add new tool(script) to fetch and update all markdown yaml frontmatter and all jsdoc file descriptions for tldr document which will be used help agents not get lost.
+- [ ] tools/todo-updater.md: Standarize formatting for todo.md (file/directory relpath, line(-1 if file wide), content)
