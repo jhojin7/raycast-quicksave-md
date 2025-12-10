@@ -27,6 +27,21 @@
       ]
     },
     {
+      "name": "save-note-form",
+      "title": "Save Note (Form)",
+      "subtitle": "Multi-line Markdown Editor",
+      "description": "Create multi-line notes with markdown preview and enhanced editing features",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "content",
+          "placeholder": "Initial content (optional)...",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
       "name": "show-info",
       "title": "Show Extension Info",
       "subtitle": "Quick Markdown Note",

@@ -38,6 +38,8 @@ declare type Preferences = ExtensionPreferences
 declare namespace Preferences {
   /** Preferences accessible in the `save-note` command */
   export type SaveNote = ExtensionPreferences & {}
+  /** Preferences accessible in the `save-note-form` command */
+  export type SaveNoteForm = ExtensionPreferences & {}
   /** Preferences accessible in the `show-info` command */
   export type ShowInfo = ExtensionPreferences & {}
 }
@@ -46,6 +48,11 @@ declare namespace Arguments {
   /** Arguments passed to the `save-note` command */
   export type SaveNote = {
   /** Text to save... */
+  "content": string
+}
+  /** Arguments passed to the `save-note-form` command */
+  export type SaveNoteForm = {
+  /** Initial content (optional)... */
   "content": string
 }
   /** Arguments passed to the `show-info` command */
