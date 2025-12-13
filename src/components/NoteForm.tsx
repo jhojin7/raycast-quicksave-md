@@ -1,16 +1,6 @@
 // @ts-nocheck - React 18 types conflict with Raycast API components, disabling type checking for this file
-import { useState, useCallback, useEffect } from "react";
-import {
-  Detail,
-  ActionPanel,
-  Action,
-  showToast,
-  Toast,
-  getPreferenceValues,
-  getSelectedText,
-  Clipboard,
-} from "@raycast/api";
-import { useContentResolver } from "../hooks/useContentResolver";
+import { useState, useCallback } from "react";
+import { Form, ActionPanel, Action, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { saveNoteContent } from "../utils/noteSaver";
 
 /**
@@ -34,128 +24,78 @@ interface Preferences {
  * Props for the NoteForm component
  */
 interface NoteFormProps {
-  initialContent?: string;
+  defaultContent?: string;
 }
 
 /**
- * NoteForm component for multi-line note creation using Detail view
- * Features content resolution, markdown preview, and action-based saving
+ * NoteForm component for multi-line note creation using Form.TextArea
+ * Features markdown highlighting, draft persistence, and validation
  */
-export function NoteForm({ initialContent }: NoteFormProps) {
-  const [content, setContent] = useState("");
+export function NoteForm({ defaultContent }: NoteFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { resolveContent, isLoading } = useContentResolver();
   const prefs = getPreferenceValues<Preferences>();
 
   /**
-   * Initialize content from available sources when component mounts
+   * Handle form submission with validation and error handling
    */
-  useEffect(() => {
-    const initializeContent = async () => {
-      if (!initialContent) {
-        const resolvedContent = await resolveContent();
-        if (resolvedContent) {
-          setContent(resolvedContent);
-        }
-      } else {
-        setContent(initialContent);
+  const handleSubmit = useCallback(
+    async (values: Form.Values) => {
+      const content = values.content as string;
+
+      // Validate non-empty content
+      if (!content || content.trim().length === 0) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "No content to save",
+          message: "Please enter some text before saving",
+        });
+        return;
       }
-    };
 
-    initializeContent();
-  }, [initialContent, resolveContent]);
+      setIsSubmitting(true);
 
-  /**
-   * Handle form submission with error handling
-   */
-  const handleSubmit = useCallback(async () => {
-    if (!content || content.trim().length === 0) {
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "No content to save",
-        message: "Please enter some text before saving",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const filename = await saveNoteContent(content, prefs);
-      await showToast({
-        style: Toast.Style.Success,
-        title: "Note saved",
-        message: filename,
-      });
-      // Detail view will close automatically after successful submission
-    } catch (error) {
-      await showToast({
-        style: Toast.Style.Failure,
-        title: "Failed to save note",
-        message: error instanceof Error ? error.message : String(error),
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [content, prefs]);
-
-  /**
-   * Generate markdown content for display
-   */
-  const markdown = content || "No content yet. Start typing...";
+      try {
+        const filename = await saveNoteContent(content, prefs);
+        await showToast({
+          style: Toast.Style.Success,
+          title: "Note saved",
+          message: filename,
+        });
+        // Form will close automatically after successful submission
+      } catch (error) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Failed to save note",
+          message: error instanceof Error ? error.message : String(error),
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [prefs]
+  );
 
   return (
-    <Detail
-      markdown={markdown}
-      isLoading={isLoading || isSubmitting}
+    <Form
+      enableDrafts
+      isLoading={isSubmitting}
       actions={
         <ActionPanel>
-          <Action
+          <Action.SubmitForm
             title="Save Note"
-            onAction={handleSubmit}
+            onSubmit={handleSubmit}
             shortcut={{ modifiers: ["cmd"], key: "enter" }}
           />
-          <Action
-            title="Clear Content"
-            onAction={() => setContent("")}
-            shortcut={{ modifiers: ["cmd"], key: "k" }}
-          />
-          <ActionPanel.Section title="Content Sources">
-            <Action
-              title="Use Selection"
-              onAction={async () => {
-                try {
-                  const selectedText = await getSelectedText();
-                  if (selectedText) {
-                    setContent(selectedText);
-                  }
-                } catch (error) {
-                  await showToast({
-                    style: Toast.Style.Failure,
-                    title: "No selection available",
-                  });
-                }
-              }}
-            />
-            <Action
-              title="Use Clipboard"
-              onAction={async () => {
-                try {
-                  const clipboardText = await Clipboard.readText();
-                  if (clipboardText) {
-                    setContent(clipboardText);
-                  }
-                } catch (error) {
-                  await showToast({
-                    style: Toast.Style.Failure,
-                    title: "Clipboard empty",
-                  });
-                }
-              }}
-            />
-          </ActionPanel.Section>
         </ActionPanel>
       }
-    />
+    >
+      <Form.TextArea
+        id="content"
+        title="Note"
+        placeholder="Type your note here... (Shift+Enter or Ctrl+J for new lines)"
+        enableMarkdown={true}
+        defaultValue={defaultContent}
+      />
+    </Form>
   );
 }

@@ -1,189 +1,205 @@
-# Multi-Line Support Implementation Plan
+# Multi-Line Form Implementation Plan
 
 ## Overview
 
-Add multi-line input capability to the Raycast Quick Markdown Note extension, allowing users to compose longer notes with proper formatting directly within Raycast.
+Replace the current `Detail`-based multi-line note form with a proper `Form.TextArea` component that supports:
 
-## Current Limitations
+- Uncontrolled input with automatic draft persistence
+- Markdown highlighting and shortcuts
+- Empty start state (no auto-population)
+- Non-empty validation before save
+- Native newline support (Shift+Enter, Ctrl+J)
 
-- Single-line argument input only
-- No line break support in content
-- Limited to short text capture
+---
 
-## Implementation Strategy
+## File Changes
 
-### 1. UI Component Change
+### **1. `src/components/NoteForm.tsx` - Complete Rewrite**
 
-- **From**: `no-view` command with single text argument
-- **To**: React Form component with multi-line textarea
-- **File**: `src/save-note.tsx` → `src/save-note-form.tsx`
+**Remove:**
 
-### 2. New Features to Add
+- `useState` for content management
+- `useContentResolver` hook and all content resolution logic
+- `Detail` component
+- Actions: "Clear Content", "Use Selection", "Use Clipboard"
+- All manual state management for content
 
-#### A. Multi-line Text Input
+**Add:**
 
-- Replace argument with `<TextArea>` component
-- Support for line breaks and proper formatting
-- Auto-resize textarea for better UX
+- `Form` component with `enableDrafts={true}`
+- `Form.TextArea` with:
+  - `id="content"`
+  - `title="Note"`
+  - `placeholder="Type your note here... (Shift+Enter or Ctrl+J for new lines)"`
+  - `enableMarkdown={true}`
+  - No `defaultValue` (empty on launch)
+  - No `value`/`onChange` (uncontrolled)
 
-#### B. Enhanced Content Resolution
+**Update:**
 
-- Keep existing priority: form input → selection → clipboard
-- Preserve line breaks from all sources
-- Handle multi-line selections properly
+- `handleSubmit` signature: accept `values: Form.Values` instead of manual content
+- Validate `values.content` is non-empty before saving
+- Keep error handling with `showToast`
 
-#### C. Preview Mode (Optional Enhancement)
+**Keep:**
 
-- Live markdown preview toggle
-- Show formatted output before saving
-- Help users verify their note formatting
+- `isSubmitting` state for loading indicator
+- `showToast` for error/validation messages
+- Preferences interface and `getPreferenceValues`
+- `saveNoteContent` utility function call
 
-#### D. Quick Actions
+### **2. `src/save-note-form.tsx` - Add Draft Support**
 
-- "Save & Close" (default action)
-- "Save & New" (clear form, keep directory)
-- "Cancel" (close without saving)
+**Update:**
 
-### 3. Technical Changes Required
+- Add `draftValues` to `LaunchProps` type:
 
-#### A. File Structure
+  ```tsx
+  interface DraftValues {
+    content?: string;
+  }
 
+  LaunchProps<{
+    arguments: Arguments;
+    draftValues: DraftValues;
+  }>;
+  ```
+
+- Pass `draftValues?.content` as `defaultValue` to `NoteForm`:
+
+  ```tsx
+  <NoteForm defaultContent={props.draftValues?.content} />
+  ```
+
+**Update NoteForm props:**
+
+- Add `defaultContent?: string` to `NoteFormProps` interface
+- Use in Form.TextArea as `defaultValue={defaultContent}`
+
+### **3. `src/hooks/useContentResolver.ts` - DELETE FILE**
+
+This hook is no longer needed since we're not auto-resolving content on launch.
+
+---
+
+## New Component Structure
+
+```tsx
+// src/components/NoteForm.tsx
+<Form
+  enableDrafts
+  isLoading={isSubmitting}
+  actions={
+    <ActionPanel>
+      <Action.SubmitForm
+        title="Save Note"
+        onSubmit={handleSubmit}
+        shortcut={{ modifiers: ["cmd"], key: "enter" }}
+      />
+    </ActionPanel>
+  }
+>
+  <Form.TextArea
+    id="content"
+    title="Note"
+    placeholder="Type your note here... (Shift+Enter or Ctrl+J for new lines)"
+    enableMarkdown={true}
+    defaultValue={defaultContent}
+  />
+</Form>
 ```
-src/
-├── components/
-│   ├── NoteForm.tsx          # New form component
-│   └── PreviewPanel.tsx      # Optional preview component
-├── save-note.tsx             # Modified to use form
-└── hooks/
-    └── useContentResolver.ts # Extract content resolution logic
-```
 
-#### B. Form Component (`NoteForm.tsx`)
+---
 
-```typescript
-interface NoteFormProps {
-  initialContent?: string;
-  onSave: (content: string) => void;
-  onCancel: () => void;
+## Validation Logic
+
+```tsx
+function handleSubmit(values: Form.Values) {
+  const content = values.content as string;
+
+  if (!content || content.trim().length === 0) {
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "No content to save",
+      message: "Please enter some text before saving",
+    });
+    return;
+  }
+
+  // Proceed with save...
 }
-
-// Features:
-- TextArea with auto-resize
-- Content preview toggle
-- Character/word count
-- Save shortcuts (Cmd+Enter)
 ```
 
-#### C. Content Resolution Hook
+---
 
-```typescript
-// Extract existing logic into reusable hook
-const useContentResolver = () => {
-  // Priority: form → selection → clipboard
-  // Preserve line breaks from all sources
-};
-```
+## Draft Lifecycle
 
-#### D. Keyboard Shortcuts
+1. **First launch**: Empty TextArea, no draft
+2. **User types**: Raycast auto-saves draft in background
+3. **User exits (Cmd+W)**: Draft persisted automatically
+4. **User re-launches**: Raycast passes draft via `props.draftValues.content`
+5. **Component receives**: Sets as `defaultValue` on Form.TextArea
+6. **User submits**: Raycast auto-clears draft after successful `Action.SubmitForm`
 
-- `Cmd+Enter`: Save and close
-- `Cmd+Shift+Enter`: Save and new
-- `Escape`: Cancel
+---
 
-### 4. Enhanced Preferences
+## Behavior Changes
 
-#### A. Form Behavior Settings
+| Feature          | Before (Detail)         | After (Form.TextArea)         |
+| ---------------- | ----------------------- | ----------------------------- |
+| Input method     | Actions to load content | Direct typing                 |
+| Multi-line       | N/A (display only)      | Shift+Enter, Ctrl+J           |
+| Content source   | Selection → Clipboard   | Manual typing only            |
+| Persistence      | None                    | Auto-draft                    |
+| Markdown         | Preview only            | Live highlighting + shortcuts |
+| Empty validation | Manual check            | Manual check (same)           |
+| Size control     | N/A                     | Raycast auto-sizing           |
 
-```typescript
-interface FormPreferences {
-  /** Auto-focus textarea when form opens */
-  autoFocus: boolean;
-  /** Show character count */
-  showCharCount: boolean;
-  /** Enable preview mode by default */
-  enablePreview: boolean;
-  /** Default textarea height (rows) */
-  defaultRows: number;
-}
-```
+---
 
-#### B. Quick Actions Settings
+## Testing Checklist
 
-```typescript
-interface QuickActionPreferences {
-  /** Action to take after saving */
-  afterSaveAction: "close" | "new" | "stay";
-  /** Show save confirmation */
-  showSaveConfirmation: boolean;
-}
-```
+After implementation, verify:
 
-### 5. Migration Strategy
+- [ ] Form renders with empty TextArea on first launch
+- [ ] Typing updates the TextArea (uncontrolled still works)
+- [ ] Shift+Enter creates new line
+- [ ] Ctrl+J creates new line
+- [ ] Cmd+B adds **bold** markdown
+- [ ] Cmd+I adds _italic_ markdown
+- [ ] Submitting empty content shows validation error toast
+- [ ] Submitting valid content saves note successfully
+- [ ] Exiting (Cmd+W) preserves draft
+- [ ] Re-launching restores draft content
+- [ ] Successful save clears draft
+- [ ] isLoading shows during save operation
 
-#### Phase 1: Core Multi-line Support
+---
 
-1. Create `NoteForm.tsx` component
-2. Modify `save-note.tsx` to render form
-3. Preserve existing content resolution logic
-4. Add basic keyboard shortcuts
+## Files Modified Summary
 
-#### Phase 2: Enhanced UX
+1. ✏️ **`src/components/NoteForm.tsx`** - Complete rewrite (Detail → Form)
+2. ✏️ **`src/save-note-form.tsx`** - Add draftValues support
+3. 🗑️ **`src/hooks/useContentResolver.ts`** - Delete (no longer used)
 
-1. Add preview mode toggle
-2. Implement character/word count
-3. Add auto-resize textarea
-4. Enhance error handling
+---
 
-#### Phase 3: Advanced Features
+## Known Limitations (Raycast API Constraints)
 
-1. Add quick actions (Save & New)
-2. Implement form preferences
-3. Add templates support
-4. Enhanced keyboard navigation
+- ❌ Cannot set custom width/height for TextArea
+- ❌ Cannot center or position TextArea manually
+- ❌ Cannot programmatically set value in uncontrolled mode
+- ✅ TextArea auto-expands vertically with content
+- ✅ Native Cmd+V paste works perfectly
 
-### 6. Backward Compatibility
+---
 
-- Keep existing argument-based command for power users
-- Add new command "Save Note (Form)" alongside original
-- Maintain all existing preferences
-- Preserve content resolution priority
+## Implementation Result
 
-### 7. Testing Strategy
+This will result in:
 
-- Test multi-line content from all sources
-- Verify line break preservation
-- Test keyboard shortcuts
-- Validate form preferences
-- Test backward compatibility
-
-### 8. File Changes Summary
-
-#### New Files
-
-- `src/components/NoteForm.tsx`
-- `src/components/PreviewPanel.tsx` (optional)
-- `src/hooks/useContentResolver.ts`
-
-#### Modified Files
-
-- `src/save-note.tsx` (main command)
-- `package.json` (add new dependencies if needed)
-- `PRD.md` (update documentation)
-
-#### New Commands (in `package.json`)
-
-- "Save Note (Form)" - new multi-line form command
-- "Save Note" - existing single-line command (unchanged)
-
-## Implementation Priority
-
-1. **High**: Core multi-line form with basic save functionality
-2. **Medium**: Preview mode and enhanced UX features
-3. **Low**: Advanced preferences and quick actions
-
-## Success Metrics
-
-- Users can compose multi-line notes with proper formatting
-- Line breaks are preserved from all content sources
-- Form is intuitive and fast to use
-- Backward compatibility maintained for existing users
+- Simpler, cleaner code (~60 lines vs ~160 lines)
+- Better UX (direct typing vs action-based input)
+- Automatic draft persistence (Raycast handles it)
+- Markdown editing with live highlighting
+- Proper multi-line text input

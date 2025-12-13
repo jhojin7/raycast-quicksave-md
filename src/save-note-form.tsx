@@ -11,14 +11,30 @@ interface Arguments {
 }
 
 /**
- * Form-based command for creating multi-line markdown notes.
- * Uses a Detail view with markdown preview and action-based saving.
- *
- * This command provides a more interactive note-taking experience
- * compared to the quick-capture no-view command.
- *
- * @param props - Launch properties containing optional initial content
+ * Draft values automatically preserved by Raycast when drafts are enabled.
  */
-export default async function Command(props: LaunchProps<{ arguments: Arguments }>) {
-  return <NoteForm initialContent={props.arguments.content} />;
+interface DraftValues {
+  /** The content of the note being drafted */
+  content?: string;
+}
+
+/**
+ * Form-based command for creating multi-line markdown notes.
+ * Uses a Form.TextArea with markdown highlighting and automatic draft persistence.
+ *
+ * This command provides an interactive note-taking experience with:
+ * - Direct typing into a multi-line text area
+ * - Markdown syntax highlighting and shortcuts (Cmd+B, Cmd+I, etc.)
+ * - Automatic draft saving and restoration
+ * - Shift+Enter and Ctrl+J for newlines
+ *
+ * @param props - Launch properties containing optional initial content and draft values
+ */
+export default function Command(
+  props: LaunchProps<{ arguments: Arguments; draftValues: DraftValues }>
+) {
+  // Priority: draftValues (restored draft) > arguments (passed content)
+  const defaultContent = props.draftValues?.content || props.arguments.content;
+
+  return <NoteForm defaultContent={defaultContent} />;
 }
