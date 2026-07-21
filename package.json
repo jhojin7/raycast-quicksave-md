@@ -153,8 +153,8 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
-    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.opencode/node_modules\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\" \"#.opencode/node_modules\"",
     "publish": "npx @raycast/api@latest publish",
     "prepare": "husky"
   }

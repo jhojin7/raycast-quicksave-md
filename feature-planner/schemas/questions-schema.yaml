@@ -1,0 +1,154 @@
+# Question Schema Reference
+# This file defines the structure for questions in the Feature Planner skill
+
+# Schema version
+version: "1.0"
+
+# Question format specification
+question_format:
+  id:
+    type: string
+    required: true
+    description: "Unique identifier for the question (e.g., 'q1', 'q2', 'auth_method')"
+
+  text:
+    type: string
+    required: true
+    description: "The question text to display to the user"
+
+  allow_multiple:
+    type: boolean
+    required: true
+    description: "Whether user can select multiple options (true) or single option (false)"
+
+  options:
+    type: array
+    required: true
+    description: "List of possible answers"
+    items:
+      id:
+        type: string
+        required: true
+        description: "Unique identifier for this option"
+
+      text:
+        type: string
+        required: true
+        description: "Display text for this option"
+
+# Example question structure
+example_questions:
+  questions:
+    - id: q1
+      text: "What is the primary goal of this feature?"
+      allow_multiple: false
+      options:
+        - id: "user_request"
+          text: "Direct user request or need"
+        - id: "improve_ux"
+          text: "Improve user experience"
+        - id: "other"
+          text: "Other (please specify)"
+
+    - id: q2
+      text: "What type of change is this?"
+      allow_multiple: true
+      options:
+        - id: "ui"
+          text: "UI/Frontend component"
+        - id: "backend"
+          text: "Backend/API logic"
+        - id: "database"
+          text: "Database schema or data model"
+
+# Response format specification
+response_format:
+  description: "Responses should map question IDs to selected option IDs"
+
+  single_choice_example:
+    q1: "user_request"
+
+  multiple_choice_example:
+    q2: ["ui", "backend"]
+
+  alternative_formats:
+    - format: "Letter-based"
+      example: "1: A, 2: B,C, 3: D"
+
+    - format: "Natural language"
+      example: "For question 1, I choose 'Direct user request'. For question 2, it's both UI and Backend."
+
+    - format: "YAML structured"
+      example: |
+        responses:
+          q1: user_request
+          q2: [ui, backend]
+          q3: medium
+
+# Saved Q&A session format
+session_format:
+  task_name:
+    type: string
+    description: "Name/slug for this implementation task"
+
+  task_type:
+    type: string
+    description: "Type of task: feature, bugfix, refactor, documentation, etc."
+
+  timestamp:
+    type: string
+    description: "ISO 8601 timestamp of when session was created"
+
+  complexity:
+    type: string
+    description: "Estimated complexity: simple, medium, complex, very_complex"
+
+  questions:
+    type: array
+    description: "All questions asked during the session"
+
+  responses:
+    type: object
+    description: "User's responses mapped to question IDs"
+
+  metadata:
+    type: object
+    description: "Additional context (repository info, tech stack, etc.)"
+
+# Example saved session
+example_session:
+  task_name: "dark-mode-toggle"
+  task_type: "feature"
+  timestamp: "2025-12-10T10:30:00Z"
+  complexity: "medium"
+
+  questions:
+    - id: q1
+      text: "What is the primary goal or problem this feature solves?"
+      allow_multiple: false
+      options:
+        - id: "improve_ux"
+          text: "Improve user experience"
+
+    - id: q2
+      text: "What type of change is this?"
+      allow_multiple: true
+      options:
+        - id: "ui"
+          text: "UI/Frontend component"
+
+  responses:
+    q1: "improve_ux"
+    q2: ["ui"]
+    q3: "medium"
+    q4: ["none"]
+
+  metadata:
+    repository: "raycast-quicksave-md"
+    tech_stack:
+      - "TypeScript"
+      - "React"
+      - "@raycast/api"
+    detected_patterns:
+      - "Raycast extension"
+      - "No-view commands preferred"
