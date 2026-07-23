@@ -27,6 +27,21 @@
       ]
     },
     {
+      "name": "save-note-form",
+      "title": "Save Note (Form)",
+      "subtitle": "Multi-line Markdown Editor",
+      "description": "Create multi-line notes with markdown preview and enhanced editing features",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "content",
+          "placeholder": "Initial content (optional)...",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
       "name": "show-info",
       "title": "Show Extension Info",
       "subtitle": "Quick Markdown Note",
@@ -153,8 +168,8 @@
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
-    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.opencode\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\" \"#.opencode\"",
     "publish": "npx @raycast/api@latest publish",
     "prepare": "husky"
   }
